@@ -140,7 +140,11 @@ module Twostroke
       expr = conditional_expression
       if try_peek_token && peek_token.type == :EQUALS
         next_token
-        expr = AST::Assignment.new left: expr, line: token.line, right: assignment_expression
+        right = assignment_expression
+        if !expr.is_a?(AST::Named) || right.nil?
+          raise Exception.new "Corrupted AST"
+        end
+        expr = AST::Assignment.new left: expr, line: token.line, right: right
       elsif try_peek_token && nodes.keys.includes? peek_token.type
         expr = nodes[next_token.type].new left: expr, line: token.line, assign_result_left: true, right: assignment_expression
       end
@@ -444,7 +448,7 @@ module Twostroke
         if peek_token.type == :VAR
           next_token
           assert_type next_token, :BAREWORD
-          lval = AST::Declaration.new line: token.line, name: token.val
+          lval = AST::Declaration.new line: token.line, name: token.val.to_s
         else
           lval = shift_expression # shift_expression is the precedence level right below in's
         end
@@ -648,7 +652,7 @@ module Twostroke
 
     private def var_rest
       assert_type next_token, :BAREWORD
-      decl = AST::Declaration.new line: token.line, name: token.val
+      decl = AST::Declaration.new line: token.line, name: token.val.to_s
       return decl if peek_token.type == :SEMICOLON || peek_token.type == :CLOSE_BRACE
 
       assert_type next_token, :COMMA, :EQUALS
@@ -656,7 +660,11 @@ module Twostroke
       if token.type == :COMMA
         AST::MultiExpression.new line: token.line, left: decl, right: var_rest
       else
-        assignment = AST::Assignment.new line: token.line, left: decl, right: assignment_expression
+        right = assignment_expression
+        if decl.nil? || right.nil?
+          raise Exception.new "Corrupted AST"
+        end
+        assignment = AST::Assignment.new line: token.line, left: decl, right: right
         if peek_token.type == :SEMICOLON || peek_token.type == :CLOSE_BRACE
           assignment
         elsif peek_token.type == :COMMA

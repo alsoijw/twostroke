@@ -2,7 +2,7 @@ module Twostroke::AST
   class Assignment < Base
     property :left, :right
 
-    def initialize(@left : Base?, @line : Int32, @right : Base?)
+    def initialize(@left : Named, @line : Int32, @right : Base)
     end
  
     def walk(&bk)

@@ -1,12 +1,15 @@
 module Twostroke::AST
-  class Declaration < Base
+  class Named < Base
     property :name
 
-    def initialize(@line : Int32, @name : ::Array(::String) | Float64 | Int32 | ::String | Nil = nil)
+    def initialize(@line : Int32, @name : ::String)
     end
 
     def walk
       yield self
     end
+  end
+
+  class Declaration < Named
   end
 end

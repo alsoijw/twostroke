@@ -1,6 +1,6 @@
 module Twostroke
   module AST
-    class Base
+    abstract class Base
       property :line
 
       def initialize(@line : Int32)
