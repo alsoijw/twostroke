@@ -2,7 +2,7 @@ module Twostroke::AST
   class Call < Base
     property :callee, :arguments
 
-    def initialize(@line : Int32, @callee : Base? = nil, @arguments = [] of Base?)
+    def initialize(@line : Int32, @callee : Named, @arguments = [] of Base?)
     end
 
     def walk(&bk)

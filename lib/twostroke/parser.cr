@@ -566,20 +566,24 @@ module Twostroke
     end
 
     private def call(callee)
-      assert_type next_token, :OPEN_PAREN
-      c = AST::Call.new line: token.line, callee: callee
-      while peek_token(true).type != :CLOSE_PAREN
-        while true
-          c.arguments.push assignment_expression # one level below multi_expression which can separate by comma
-          if peek_token.type == :COMMA
-            next_token
-          else
-            break
+      if callee.is_a? AST::Named
+        assert_type next_token, :OPEN_PAREN
+        c = AST::Call.new line: token.line, callee: callee
+        while peek_token(true).type != :CLOSE_PAREN
+          while true
+            c.arguments.push assignment_expression # one level below multi_expression which can separate by comma
+            if peek_token.type == :COMMA
+              next_token
+            else
+              break
+            end
           end
         end
+        next_token
+        c
+      else
+        raise Exception.new "Corrupted AST"
       end
-      next_token
-      c
     end
 
     private def index(obj)
