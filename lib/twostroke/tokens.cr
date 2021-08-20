@@ -27,9 +27,9 @@ module Twostroke
       TOKENS = [
 
         {:MULTI_COMMENT, %r{/\*.*?\*/}},
-        {:SINGLE_COMMENT, /\/\/.*?($|\r|\x2029|\x2028)/},
+        {:SINGLE_COMMENT, /\/\/.*?($|\r|\x{2029}|\x{2028})/},
 
-        {:LINE_TERMINATOR, /[\n\r\x2028\x2029]/},
+        {:LINE_TERMINATOR, /[\n\r\x{2028}\x{2029}]/},
         {:WHITESPACE, /[ \t\r\v\f]+/},
         {:NUMBER, /((?<oct>0[0-7]+)|(?<hex>0x[A-Fa-f0-9]+)|(?<to_f>(\d+(\.?\d*([eE][+-]?\d+)?)?|\.\d+([eE][+-]?\d+)?)))/, ->(m : Regex::MatchData) {
           method, number = m.regex.name_table.values.zip(m.captures).select { |k, v| v }.first
